@@ -1,0 +1,16 @@
+/Client/.idea
+/Client/.vs
+/Client/obj
+/Client/Packages
+/Client/ProjectSettings
+/Client/UserSettings
+/Client/*.vsconfig
+/Client/Assets/HybridCLRBuildCache
+/Client/Assets/HybridCLRGenerate
+/Client/Assets/StreamingAssets
+*.meta
+/Client/Bundles
+/Client/HybridCLRData
+/Client/Assets/BundleResources
+/Client/Logs
+/Client/Library

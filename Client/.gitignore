@@ -1,0 +1,11 @@
+/Bundles
+/Assets/StreamingAssets
+*.meta
+/HybridCLRData
+/Assets/HybridCLRBuildCache
+/Assets/HybridCLRGenerate
+/Library
+/Logs
+/Temp
+/UserSettings
+/yoo
