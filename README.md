@@ -16,6 +16,7 @@ Unity Framework by use YooAsset and Hybridclr
   Scenes：存放游戏包体的场景（及不需要热更新的场景）。
   Scripts：存放游戏框架代码，即不需要做热更新的代码。（更新该内容需要打新包，大版本更新）
 3.服务端目录如下：
-    ConfigDefine：用于存放游戏配置表的定义
+  ConfigDefine：用于存放游戏配置表的定义。
+  Configs：存放游戏配置表，游戏配置使用json文件进行存储。
   
 
