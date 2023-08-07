@@ -45,8 +45,8 @@ Unity Framework by use YooAsset and Hybridclr
 ### 6.ProtoBuf协议生成及使用
     （1）DJFramework\Libs\ProtoTool\proto\Message.proto文件中添加相关的proto协议消息  
     （2）使用DJFramework\Libs\ProtoTool\protogen.bat 工具将proto协议生成对应CS脚本文件  
-      （3）将DJFramework\Libs\ProtoTool\Message\proto\Message.CS协议文件分别复制到客户端和服务端的Proto文件夹下  
+    （3）将DJFramework\Libs\ProtoTool\Message\proto\Message.CS协议文件分别复制到客户端和服务端的Proto文件夹下  
 ### 7.数据库的创建及使用
-      （1）打开GameDB.edmx文件，右键生成对应的数据表及其字段  
-      （2）右键根据模型生成数据库  
-      （3）将生成的sql语句进行复制，到数据库工具中新建查询，粘贴复制的sql语句，执行语句即可得到最新的数据库表（此时会覆盖掉数据库中已经存在的数据需要谨慎处理）
+    （1）打开GameDB.edmx文件，右键生成对应的数据表及其字段  
+    （2）右键根据模型生成数据库  
+    （3）将生成的sql语句进行复制，到数据库工具中新建查询，粘贴复制的sql语句，执行语句即可得到最新的数据库表（此时会覆盖掉数据库中已经存在的数据需要谨慎处理）
