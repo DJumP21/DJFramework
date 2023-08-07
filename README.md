@@ -1,6 +1,8 @@
 # DJFramework
 Unity Framework by use YooAsset and Hybridclr  
-客户端框架基于[Hybridclr热更框架](https://hybridclr.doc.code-philosophy.com/docs/intro)以及[YooAsset资源管理框架](https://www.yooasset.com/docs/Introduce)进行设计，同时借鉴了[UniFramework](https://github.com/gmhevinci/UniFramework)设计思路进行流程设计。服务器参考了[《网络游戏开发实战》](https://github.com/luopeiyu/unity_net_book)相关内容进行设计开发。通讯协议使用Protobuf协议，数据库使用SqlServer，数据存储框架使用EntityFramework框架。 ***注：仅供学习使用。***
+客户端框架基于[Hybridclr热更框架](https://hybridclr.doc.code-philosophy.com/docs/intro)以及[YooAsset资源管理框架](https://www.yooasset.com/docs/Introduce)进行设计，同时借鉴了[UniFramework](https://github.com/gmhevinci/UniFramework)设计思路进行流程设计。服务器参考了[《网络游戏开发实战》](https://github.com/luopeiyu/unity_net_book)相关内容进行设计开发。通讯协议使用Protobuf协议，数据库使用SqlServer，数据存储框架使用EntityFramework框架。  
+Unity适用版本：2021.3.18
+***注：仅供学习使用。***
 # 使用流程:  
 ## 1.整个框架目录如下：  
   Client：客户端内容  
