@@ -18,5 +18,9 @@ Unity Framework by use YooAsset and Hybridclr
 3.服务端目录如下：
   ConfigDefine：用于存放游戏配置表的定义。
   Configs：存放游戏配置表，游戏配置使用json文件进行存储。
-  
-
+  GameService:存放服务端处理客户端消息的逻辑以及服务端必要的逻辑。
+  Manager：存放对应模块的管理类。
+  MessageHandler：存放消息分发逻辑。
+  NetWork：存放网络框架底层逻辑。
+  Proto：存放网络消息协议。（由Proto工具生成）
+  Tools：存放相关工具类。
