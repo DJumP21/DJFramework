@@ -123,7 +123,7 @@ public class InitializeNode : IStateNode
     {
         //string hostServerIP = "http://10.0.0.2.2"; //°²×¿Ä£ÄâÆ÷µØÖ·
         string hostServerIP = "http://127.0.0.1";
-        string appVersion = "v1.0.0.2";
+        string appVersion = "v1.0.0.3";
 #if UNITY_EDITOR
         if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.Android)
         {

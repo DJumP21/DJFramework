@@ -71,11 +71,11 @@ namespace DJFrameWork.Singleton
                         return 1;
                     }
                 });
-                //轮询所有单例
-                for(int i=0;i<warps.Count;i++)
-                {
-                    warps[i].Singleton.OnUpdate();
-                }
+            }
+            //轮询所有单例
+            for (int i = 0; i < warps.Count; i++)
+            {
+                warps[i].Singleton.OnUpdate();
             }
         }
 

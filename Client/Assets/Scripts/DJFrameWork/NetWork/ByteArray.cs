@@ -7,7 +7,7 @@ using UnityEngine;
 namespace DJFrameWork.NetWork
 {
     /// <summary>
-    /// 数据缓存
+    /// 消息数据缓存
     /// </summary>
     public class ByteArray
     {

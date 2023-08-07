@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DJFrameWork.Singleton;
+using DJFrameWork.NetWork;
 using UnityEngine;
 /// <summary>
 /// 游戏启动入口
@@ -21,7 +22,14 @@ public class HotUpdateStart
     /// </summary>
     private static void InitGame()
     {
-        DJSingleton.CreateSingleton<WindowManager>();
-        WindowManager.Instance.OpenWindow(WindowType.StoreWindow);
+        GameObject loginWindowObj = GameObject.Find("UILoginWindow");
+        if(loginWindowObj != null )
+        {
+            UILoginWindow loginWindow = loginWindowObj.AddComponent<UILoginWindow>();
+            loginWindow.ConnectToServer();
+        }
+        
+       /* DJSingleton.CreateSingleton<WindowManager>();
+        WindowManager.Instance.OpenWindow(WindowType.StoreWindow);*/
     }
 }

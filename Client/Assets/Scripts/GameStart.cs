@@ -48,6 +48,10 @@ public class GameStart : MonoBehaviour
         DJSingleton.CreateSingleton<MySceneManager>();
         //加载资源管理器
         DJSingleton.CreateSingleton<ResManager>();
+        //加载配置管理器
+        DJSingleton.CreateSingleton<ConfigManager>();
+
+        DJSingleton.CreateSingleton<TimeManager>();
 
         //切换到热更场景
         MySceneManager.Instance.LoadScene("Loading", () =>

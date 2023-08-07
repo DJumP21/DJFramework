@@ -14,3 +14,6 @@
 /Client/Assets/BundleResources
 /Client/Logs
 /Client/Library
+/Server/GameServer/.idea
+/Server/GameServer/.vs
+/Server/GameServer/GameServer/bin

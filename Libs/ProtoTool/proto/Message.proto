@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package ProtoMessage;
+
+message MsgBase {
+    MsgPing msgPing = 91;
+    MsgPong msgPong = 92;
+
+    LoginRequest loginRequest = 1;
+    LoginResponse loginResponse = 2;
+
+}
+
+//消息处理结果
+enum Result 
+{
+    Success = 1;
+    Fail = 2;
+}
+
+//Ping协议 客户端发送给服务端
+message MsgPing
+{
+    int32 id = 1;
+    string msgName = 2;
+}
+
+//Pong协议 服务端发送给客户端
+message  MsgPong
+{
+    int32 id = 1;
+    string  msgName = 2;
+}
+
+//登录请求协议
+message LoginRequest
+{
+    int32 id = 1;
+    string userName = 2;
+    string password = 3;
+}
+
+//登录响应协议
+message LoginResponse
+{
+    int32 id = 1;
+    Result result = 2;
+    string err = 3;
+}
+
+
+

@@ -6,6 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using ProtoMessage;
+using Assets.Scripts.DJFrameWork.NetWork;
+
 namespace DJFrameWork.NetWork
 {
     /// <summary>
@@ -21,11 +24,11 @@ namespace DJFrameWork.NetWork
         private static Queue<ByteArray> writeQueue;
 
         //消息监听
-        public delegate void MsgListener(MsgBase msg);
+        public delegate void MsgListener(ProtoBuf.IExtensible msg);
         //监听列表
         private static Dictionary<string, MsgListener> msgListeners = new Dictionary<string, MsgListener>();
         //消息队列
-        private static List<MsgBase> msgList;
+        private static List<ProtoBuf.IExtensible> msgList;
         //消息队列的长度
         private static int msgCount = 0;
         //每次Update处理的消息量
@@ -49,6 +52,9 @@ namespace DJFrameWork.NetWork
         private static float lastPingTime = 0;
         //上次接收Pong的时间
         private static float lastPongTime = 0;
+
+        //是否连接成功
+        public static bool connectSuccess = false;
 
         /// <summary>
         /// 连接
@@ -87,7 +93,7 @@ namespace DJFrameWork.NetWork
             //缓冲队列
             writeQueue=new Queue<ByteArray>();
             //消息队列
-            msgList = new List<MsgBase>();
+            msgList = new List<ProtoBuf.IExtensible>();
             msgCount = 0;
             isConnecting = false;
             isclosing = false;
@@ -112,6 +118,7 @@ namespace DJFrameWork.NetWork
                 Socket socket = (Socket)ar.AsyncState;
                 socket.EndConnect(ar);
                 DJLog.Log("网络连接成功");
+                connectSuccess = true;
                 FireEvent(NetEvent.ConnectSuccess, "");
                 isConnecting=false;
                 clientSocket.BeginReceive(readBuffer.bytes, 0, readBuffer.bytes.Length, 0, ReceiveCallBack, clientSocket);
@@ -172,32 +179,28 @@ namespace DJFrameWork.NetWork
             int readIndex = readBuffer.readIndex;
             byte[] bytes = readBuffer.bytes;
             Int16 bodyLength = (Int16)((bytes[readIndex+1] << 8) | bytes[readIndex]);
-            if(readBuffer.readIndex < bodyLength+2)
+            if(readBuffer.Length < bodyLength+2)
             {
                 return;
             }
             readBuffer.readIndex += 2;
             //解析协议名
             int nameCount = 0;
-            string protoName = MsgBase.DecodeName(readBuffer.bytes, readBuffer.readIndex,out nameCount);
+            string protoName = ProtobufHelper.DecodeName(readBuffer.bytes, readBuffer.readIndex,out nameCount);
             //协议名为空
-            if(protoName == "")
+            if(string.IsNullOrEmpty(protoName))
             {
                 DJLog.Error("解析协议名错误");
                 return;
             }
             readBuffer.readIndex += nameCount;
             //解析协议体
-            int bodyCount = bodyLength - readBuffer.readIndex;
-            MsgBase msgBase = MsgBase.Decode(protoName, readBuffer.bytes, readBuffer.readIndex, bodyCount);
+            int bodyCount = bodyLength - nameCount;
+            MsgBase msgBase = ProtobufHelper.DeserizalizeFromByteAry_PB<MsgBase>(readBuffer.bytes, readBuffer.readIndex, bodyCount);
             readBuffer.readIndex += bodyCount;
             //检查并移动字节
             readBuffer.CheckAndMoveBytes();
-            //添加到消息队列
-            lock(msgList)
-            {
-                msgList.Add(msgBase);
-            }
+            MessagePatch.PatchMessage(msgBase);
             msgCount++;
             //继续读取消息
             if(readBuffer.Length>0)
@@ -207,10 +210,23 @@ namespace DJFrameWork.NetWork
         }
 
         /// <summary>
+        /// 添加消息到消息队列
+        /// </summary>
+        /// <param name="msg"></param>
+        public static void AddMsgToMsgList(ProtoBuf.IExtensible msg)
+        {
+            //添加到消息队列
+            lock (msgList)
+            {
+                msgList.Add(msg);
+            }
+        }
+
+        /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="sendStr">消息内容</param>
-        public static void Send(MsgBase msg)
+        public static void Send(ProtoBuf.IExtensible msg)
         {
             if (clientSocket == null || !clientSocket.Connected)
             {
@@ -224,9 +240,9 @@ namespace DJFrameWork.NetWork
             {
                 return;
             }
-            //消息对象转化为字节数据
-            byte[] nameBytes = MsgBase.EncodeName(msg);
-            byte[] bodyBytes = MsgBase.Encode(msg);
+            
+            byte[] nameBytes = ProtobufHelper.EncodeName(msg);
+            byte[] bodyBytes = ProtobufHelper.SerializeToByteAry_PB(msg);
             int length = nameBytes.Length + bodyBytes.Length;
             //发送消息的长度 = 协议名字节长度+协议体字节长度+2（协议长度的字节） 
             byte[] sendBytes = new byte[length + 2];
@@ -267,10 +283,13 @@ namespace DJFrameWork.NetWork
             //EndSend
             int count= socket.EndSend(ar);
             //获取写入队列第一条数据
-            ByteArray ba;
+            ByteArray ba = null;
             lock(writeQueue)
             {
-                ba = writeQueue.First();
+                if (writeQueue.Count > 0)
+                {
+                    ba = writeQueue.First();
+                }
             }
             //完整发送
             ba.readIndex += count;
@@ -279,7 +298,10 @@ namespace DJFrameWork.NetWork
                 lock(writeQueue)
                 {
                     writeQueue.Dequeue();
-                    ba = writeQueue.Dequeue();
+                    if(writeQueue.Count > 0)
+                    {
+                        ba = writeQueue.First();
+                    }
                 }
             }
             //继续发送 直到发送队列为空
@@ -314,7 +336,7 @@ namespace DJFrameWork.NetWork
             for(int i=0;i<MAX_MESSAGE_FIRE;i++)
             {
                 //获取第一条消息
-                MsgBase msg = null;
+                ProtoBuf.IExtensible msg = null;
                 lock(msgList)
                 {
                     if(msgCount>0)
@@ -327,7 +349,8 @@ namespace DJFrameWork.NetWork
                 //分发消息
                 if (msg != null)
                 {
-                    FireMsg(msg.protoName, msg);
+                    string protoName = msg.ToString().Split('.')[1];
+                    FireMsg(protoName, msg);
                 }
                 else
                 {
@@ -403,7 +426,7 @@ namespace DJFrameWork.NetWork
         /// </summary>
         /// <param name="msgName">消息名称</param>
         /// <param name="msgBase">消息</param>
-        public static void FireMsg(string msgName,MsgBase msgBase)
+        public static void FireMsg(string msgName,ProtoBuf.IExtensible msgBase)
         {
             if(msgListeners.ContainsKey(msgName))
             {
@@ -487,7 +510,11 @@ namespace DJFrameWork.NetWork
             if(Time.time - lastPingTime>pingInterval)
             {
                 MsgPing msgPing = new MsgPing();
-                Send(msgPing);
+                msgPing.Id = 1;
+                msgPing.msgName = "MsgPing"; 
+                MsgBase msg = new MsgBase();
+                msg.msgPing = msgPing;
+                Send(msg);
                 lastPingTime = Time.time;
             }
             //检测Pong时间 超过两分钟服务器没有返回结果,则关闭连接
@@ -498,9 +525,10 @@ namespace DJFrameWork.NetWork
         }
 
 
-        private static void OnMsgPong(MsgBase msgBase)
+        private static void OnMsgPong(ProtoBuf.IExtensible msgBase)
         {
             lastPongTime = Time.time;
+            DJLog.Log("Receive MgsPong");
         }
     }
 
